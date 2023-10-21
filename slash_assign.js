@@ -30,7 +30,7 @@ async function slash_assign( octokit ) {
     }
     if (github.context.eventName === "issue_comment" && github.context.payload.action === "created") {
         const issue_comment = await IssueComment.getInstance();
-        issue_comment_body = (issue_comment.details.body ?? "").trim();
+        const issue_comment_body = (issue_comment.details.body ?? "").trim();
         if((issue_comment_body).trim().startswith("/assign")) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
