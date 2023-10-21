@@ -43,9 +43,6 @@ async function slash_assign( octokit ) {
                     break;
                 }
             }
-            const current_assignee_count = issue.details.assignees.length;
-            const remaining_assignees = Math.max(max_assignee_count - current_assignee_count, 0);
-            if(remaining_assignees < 1) return;
 
             if(issue_comment_body === "/unassign") {
                 // self-unassign --done
@@ -69,16 +66,15 @@ async function slash_assign( octokit ) {
             }
             if(verifyTriageTeam()) {
                 // unassign to other contributors
-                let assignees_to_add = issue_comment_body.substring(9).split("@").map(e => e.trim())
-                assignees_to_add.shift()
-                const fcfs_assignees_to_add = assignees_to_add.slice(0, remaining_assignees)
+                let assignees_to_remove = issue_comment_body.substring(9).split("@").map(e => e.trim())
+                assignees_to_remove.shift()
 
                 try {
                     const res = await octokit.rest.issues.removeAssignees({
                         owner: github.context.payload.repository.owner.login,
                         repo: github.context.payload.repository.name,
                         issue_number: issue.actions_payload.number,
-                        assignees: fcfs_assignees_to_add
+                        assignees: assignees_to_remove
                     });
 
                     if(res.status === 200) {
