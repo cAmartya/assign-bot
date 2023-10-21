@@ -36,7 +36,7 @@ async function slash_assign( octokit ) {
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
             for(let i=0; i<issue_labels.length; i++) {
-                const label_name = labels[i].name;
+                const label_name = issue_labels[i].name;
                 if(label_name.startsWith("max-assignee")) {
                     max_assignee_count = parseInt(label_name.split("max-assignee-")[1]);
                     max_assignee_count = (max_assignee_count === NaN) ? 1 : max_assignee_count;
