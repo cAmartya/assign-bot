@@ -88,7 +88,7 @@ async function slash_assign( octokit ) {
                         assignees: fcfs_assignees_to_add
                     });
 
-                    if(res.status === 200) {
+                    if(res.status === 201) {
                         // TODO: res.assignees - issue.assignees -> success 
                         core.info("User assigned to the issue");
                     } else {
