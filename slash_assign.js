@@ -35,7 +35,6 @@ async function slash_assign( octokit ) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
-            core.info("b4, for", issue_labels);
             for(let i=0; i<issue_labels.length; i++) {
                 const label_name = issue_labels[i].name;
                 if(label_name.startsWith("max-assignee")) {
@@ -44,11 +43,9 @@ async function slash_assign( octokit ) {
                     break;
                 }
             }
-            core.info("after for");
-            core.info(max_assignee_count)  
-
-            const current_assignee_count = issue.details.assignees.length
-            const remaining_assignees = max_assignee_count - current_assignee_count;
+            
+            const current_assignee_count = issue.details.assignees.length;
+            const remaining_assignees = Math.max(max_assignee_count - current_assignee_count, 0);
             if(remaining_assignees < 1) return;
 
             if(issue_comment_body === "/assign") {
@@ -61,7 +58,7 @@ async function slash_assign( octokit ) {
                         assignees: [github.context.actor]
                     });
 
-                    if(res.status === 200) {
+                    if(res.status === 201) {
                         core.info("User assigned(self) to the issue");
                     } else {
                         core.setFailed("Failed to assign(self) user to the issue");
@@ -73,13 +70,10 @@ async function slash_assign( octokit ) {
             }
             if(verifyTriageTeam()) {
                 // assign to other contributors
-                core.info("verified ")
                 let assignees_to_add = issue_comment_body.substring(7).split("@").map(e => e.trim())
                 assignees_to_add.shift()
                 const fcfs_assignees_to_add = assignees_to_add.slice(0, remaining_assignees)
-                core.info("usernames")
-                core.info(fcfs_assignees_to_add)
-
+                
                 try {
                     const res = await octokit.rest.issues.addAssignees({
                         owner: github.context.payload.repository.owner.login,

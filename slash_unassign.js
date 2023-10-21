@@ -30,7 +30,7 @@ async function slash_assign( octokit ) {
     }
     if (github.context.eventName === "issue_comment" && github.context.payload.action === "created") {
         const issue_comment = await IssueComment.getInstance();
-        issue_comment_body = (issue_comment.details.body ?? "").trim();
+        const issue_comment_body = (issue_comment.details.body ?? "").trim();
         if((issue_comment_body).trim().startsWith("/unassign")) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
@@ -44,11 +44,11 @@ async function slash_assign( octokit ) {
                 }
             }
             const current_assignee_count = issue.details.assignees.length;
-            const remaining_assignees = max_assignee_count - current_assignee_count;
+            const remaining_assignees = Math.max(max_assignee_count - current_assignee_count, 0);
             if(remaining_assignees < 1) return;
 
             if(issue_comment_body === "/unassign") {
-                // self-assign
+                // self-unassign
                 try {
                     const res = await octokit.rest.issues.removeAssignees({
                         owner: github.context.payload.repository.owner.login,
@@ -68,8 +68,8 @@ async function slash_assign( octokit ) {
                 return;
             }
             if(verifyTriageTeam()) {
-                // assign to other contributors
-                let assignees_to_add = issue_comment_body.substr(9).split("@").map(e => e.trim())
+                // unassign to other contributors
+                let assignees_to_add = issue_comment_body.substring(9).split("@").map(e => e.trim())
                 assignees_to_add.shift()
                 const fcfs_assignees_to_add = assignees_to_add.slice(0, remaining_assignees)
 
