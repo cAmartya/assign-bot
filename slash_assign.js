@@ -44,7 +44,9 @@ async function slash_assign( octokit ) {
                     break;
                 }
             }
-            core.info("after for", max_assignee_count);            
+            core.info("after for");
+            core.info(max_assignee_count)  
+
             const current_assignee_count = issue.details.assignees.length
             const remaining_assignees = max_assignee_count - current_assignee_count;
             if(remaining_assignees < 1) return;
@@ -71,9 +73,12 @@ async function slash_assign( octokit ) {
             }
             if(verifyTriageTeam()) {
                 // assign to other contributors
-                let assignees_to_add = issue_comment_body.substr(7).split("@").map(e => e.trim())
+                core.info("verified ")
+                let assignees_to_add = issue_comment_body.substring(7).split("@").map(e => e.trim())
                 assignees_to_add.shift()
                 const fcfs_assignees_to_add = assignees_to_add.slice(0, remaining_assignees)
+                core.info("usernames")
+                core.info(fcfs_assignees_to_add)
 
                 try {
                     const res = await octokit.rest.issues.addAssignees({
