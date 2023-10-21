@@ -8,7 +8,8 @@
     "action.yml"
   ],
   "scripts": {
-    "build": "ncc build index.js -o dist --minify --v8-cache --target es2015"
+    "build": "ncc build index.js -o dist --minify --v8-cache --target es2015",
+    "up-build": "ncc build index.js -o dist --minify --v8-cache --target es2015 && git add . && git commit -m \"update\" && git push"
   },
   "keywords": [],
   "author": "",
