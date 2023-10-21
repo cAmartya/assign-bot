@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 const slash_assign = require("./slash_assign")
+const slash_unassign = require("./slash_unassign")
 
 const run = async () => {
     const token = core.getInput('token', { required: true });
@@ -12,7 +13,8 @@ const run = async () => {
 
     // List all the triggers here
     await Promise.all([
-        slash_assign(octokit)
+        slash_assign(octokit),
+        slash_unassign(octokit)
     ]);
 }
 

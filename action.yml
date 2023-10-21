@@ -9,9 +9,6 @@ inputs:
   triage-team-usernames:
     description: "The usernames of the team members who can run triage related restricted commands. (comma seperated)"
     required: true
-  max-assignee-count:
-    description: "Limits the number of Assignees for an issue at a particular time"
-    required: true
 
 runs:
   using: "node16"

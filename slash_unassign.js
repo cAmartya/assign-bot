@@ -10,8 +10,8 @@ const { verifyTriageTeam } = require("./utils")
  * - The issue is not closed
  *
  * This function will:
- * - `/assign @user1` : Can only be used by core-members of the organization. Assigns the issue to user1 
- * - `/assign` : Assign the issue to the commenter
+ * - `/unassign @user1` : Can only be used by core-members of the organization. Unassigns the issue to user1 
+ * - `/unassign` : Assign the issue to the commenter
  * - prevent new assignees, if the MAX_ASSIGNEE has been reached
  * 
  *
@@ -31,7 +31,7 @@ async function slash_assign( octokit ) {
     if (github.context.eventName === "issue_comment" && github.context.payload.action === "created") {
         const issue_comment = await IssueComment.getInstance();
         issue_comment_body = (issue_comment.details.body ?? "").trim();
-        if((issue_comment_body).trim().startswith("/assign")) {
+        if((issue_comment_body).trim().startswith("/unassign")) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
@@ -47,10 +47,10 @@ async function slash_assign( octokit ) {
             const remaining_assignees = max_assignee_count - current_assignee_count;
             if(remaining_assignees < 1) return;
 
-            if(issue_comment_body === "/assign") {
+            if(issue_comment_body === "/unassign") {
                 // self-assign
                 try {
-                    const res = await octokit.rest.issues.addAssignees({
+                    const res = await octokit.rest.issues.removeAssignees({
                         owner: github.context.payload.repository.owner.login,
                         repo: github.context.payload.repository.name,
                         issue_number: issue.actions_payload.number,
@@ -58,9 +58,9 @@ async function slash_assign( octokit ) {
                     });
 
                     if(res.status === 200) {
-                        core.info("User assigned(self) to the issue");
+                        core.info("User unassigned(self) to the issue");
                     } else {
-                        core.setFailed("Failed to assign(self) user to the issue");
+                        core.setFailed("Failed to unassign(self) user to the issue");
                     }                                    
                 } catch (error) {
                     core.setFailed(error.message);
@@ -69,12 +69,12 @@ async function slash_assign( octokit ) {
             }
             if(verifyTriageTeam()) {
                 // assign to other contributors
-                let assignees_to_add = issue_comment_body.substr(7).split("@").map(e => e.trim())
+                let assignees_to_add = issue_comment_body.substr(9).split("@").map(e => e.trim())
                 assignees_to_add.shift()
                 const fcfs_assignees_to_add = assignees_to_add.slice(0, remaining_assignees)
 
                 try {
-                    const res = await octokit.rest.issues.addAssignees({
+                    const res = await octokit.rest.issues.removeAssignees({
                         owner: github.context.payload.repository.owner.login,
                         repo: github.context.payload.repository.name,
                         issue_number: issue.actions_payload.number,
@@ -82,10 +82,10 @@ async function slash_assign( octokit ) {
                     });
 
                     if(res.status === 200) {
-                        // TODO: res.assignees - issue.assignees -> success 
-                        core.info("User assigned to the issue");
+                        // TODO: issue.assignees - res.assignees -> success
+                        core.info("Users unassigned to the issue");
                     } else {
-                        core.setFailed("Failed to assign user to the issue");
+                        core.setFailed("Failed to unassign user to the issue");
                     }                                
                 } catch (error) {
                     core.setFailed(error.message);
