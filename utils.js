@@ -8,4 +8,4 @@ function verifyTriageTeam(){
     return triageTeamUsernames.includes(actor);
 }
 
-module.exports = verifyTriageTeam
+module.exports = { verifyTriageTeam }
