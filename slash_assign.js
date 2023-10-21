@@ -43,7 +43,7 @@ async function slash_assign( octokit ) {
                     break;
                 }
             }
-            const current_assignee_count = issue.assignees.length;
+            const current_assignee_count = issue.details.assignees.length
             const remaining_assignees = max_assignee_count - current_assignee_count;
             if(remaining_assignees < 1) return;
 
