@@ -31,13 +31,13 @@ async function slash_assign( octokit ) {
     if (github.context.eventName === "issue_comment" && github.context.payload.action === "created") {
         const issue_comment = await IssueComment.getInstance();
         issue_comment_body = (issue_comment.details.body ?? "").trim();
-        if((issue_comment_body).trim().startswith("/unassign")) {
+        if((issue_comment_body).trim().startsWith("/unassign")) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
             for(let i=0; i<issue_labels.length; i++) {
                 const label_name = labels[i].name;
-                if(label_name.startswith("max-assignee")) {
+                if(label_name.startsWith("max-assignee")) {
                     max_assignee_count = parseInt(label_name.split("max-assignee-")[1]);
                     max_assignee_count = (max_assignee_count === NaN) ? 1 : max_assignee_count;
                     break;
