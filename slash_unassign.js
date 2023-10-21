@@ -48,7 +48,7 @@ async function slash_assign( octokit ) {
             if(remaining_assignees < 1) return;
 
             if(issue_comment_body === "/unassign") {
-                // self-unassign
+                // self-unassign --done
                 try {
                     const res = await octokit.rest.issues.removeAssignees({
                         owner: github.context.payload.repository.owner.login,
