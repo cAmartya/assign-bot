@@ -35,6 +35,7 @@ async function slash_assign( octokit ) {
             // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
+            core.info("b4, for", issue_labels);
             for(let i=0; i<issue_labels.length; i++) {
                 const label_name = issue_labels[i].name;
                 if(label_name.startsWith("max-assignee")) {
@@ -43,6 +44,7 @@ async function slash_assign( octokit ) {
                     break;
                 }
             }
+            core.info("after for", max_assignee_count);            
             const current_assignee_count = issue.details.assignees.length
             const remaining_assignees = max_assignee_count - current_assignee_count;
             if(remaining_assignees < 1) return;
