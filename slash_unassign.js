@@ -54,11 +54,21 @@ async function slash_assign( octokit ) {
                         assignees: [github.context.actor]
                     });
 
+                    let comment_reaction = "+1";                    
                     if(res.status === 200) {
                         core.info("User unassigned(self) to the issue");
                     } else {
+                        comment_reaction = "-1";
                         core.setFailed("Failed to unassign(self) user to the issue");
-                    }                                    
+                    } 
+                    
+                    // reaction to the comment
+                    await octokit.rest.reactions.createForIssueComment({
+                        owner: github.context.payload.repository.owner.login,
+                        repo: github.context.payload.repository.name,
+                        comment_id: issue_comment.actions_payload.id,
+                        content: comment_reaction
+                    });                                   
                 } catch (error) {
                     core.setFailed(error.message);
                 }
@@ -77,12 +87,23 @@ async function slash_assign( octokit ) {
                         assignees: assignees_to_remove
                     });
 
+                    let comment_reaction = "+1";                    
                     if(res.status === 200) {
                         // TODO: issue.assignees - res.assignees -> success
                         core.info("Users unassigned to the issue");
                     } else {
+                        comment_reaction = "-1";
                         core.setFailed("Failed to unassign user to the issue");
-                    }                                
+                    } 
+                    
+                    
+                    // reaction to the comment
+                    await octokit.rest.reactions.createForIssueComment({
+                        owner: github.context.payload.repository.owner.login,
+                        repo: github.context.payload.repository.name,
+                        comment_id: issue_comment.actions_payload.id,
+                        content: comment_reaction
+                    });
                 } catch (error) {
                     core.setFailed(error.message);
                 }

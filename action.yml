@@ -1,5 +1,5 @@
 name: "assign-bot"
-description: "Assigns issue to a member via slash command and restricts maximum number of assignees of a particular issue at a given time."
+description: "Assigns/Unassigns issue to a member via slash command and restricts maximum number of assignees of a particular issue at a given time."
 author: "swiftwave-org"
 
 inputs:

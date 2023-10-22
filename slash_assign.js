@@ -58,11 +58,21 @@ async function slash_assign( octokit ) {
                         assignees: [github.context.actor]
                     });
 
+                    let comment_reaction = "+1";
                     if(res.status === 201) {
                         core.info("User assigned(self) to the issue");
                     } else {
+                        comment_reaction = "-1";
                         core.setFailed("Failed to assign(self) user to the issue");
-                    }                                    
+                    }
+                    
+                    // reaction to the comment
+                    await octokit.rest.reactions.createForIssueComment({
+                        owner: github.context.payload.repository.owner.login,
+                        repo: github.context.payload.repository.name,
+                        comment_id: issue_comment.actions_payload.id,
+                        content: comment_reaction
+                    });                                 
                 } catch (error) {
                     core.setFailed(error.message);
                 }
@@ -82,12 +92,22 @@ async function slash_assign( octokit ) {
                         assignees: fcfs_assignees_to_add
                     });
 
+                    let comment_reaction = "+1";
                     if(res.status === 201) {
                         // TODO: res.assignees - issue.assignees -> success 
                         core.info("User assigned to the issue");
                     } else {
+                        comment_reaction = "-1";
                         core.setFailed("Failed to assign user to the issue");
-                    }                                
+                    }
+
+                    // reaction to the comment
+                    await octokit.rest.reactions.createForIssueComment({
+                        owner: github.context.payload.repository.owner.login,
+                        repo: github.context.payload.repository.name,
+                        comment_id: issue_comment.actions_payload.id,
+                        content: comment_reaction
+                    });                                
                 } catch (error) {
                     core.setFailed(error.message);
                 }
