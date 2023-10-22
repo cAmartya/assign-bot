@@ -32,7 +32,6 @@ async function slash_assign( octokit ) {
         const issue_comment = await IssueComment.getInstance();
         const issue_comment_body = (issue_comment.details.body ?? "").trim();
         if((issue_comment_body).trim().startsWith("/assign")) {
-            // const max_assignee_count = core.getInput("max-assignee-count", { required: true });
             const issue_labels = issue.details.labels;
             let max_assignee_count = 1;
             for(let i=0; i<issue_labels.length; i++) {
@@ -65,7 +64,7 @@ async function slash_assign( octokit ) {
                         comment_reaction = "-1";
                         core.setFailed("Failed to assign(self) user to the issue");
                     }
-                    
+
                     // reaction to the comment
                     await octokit.rest.reactions.createForIssueComment({
                         owner: github.context.payload.repository.owner.login,
@@ -94,7 +93,6 @@ async function slash_assign( octokit ) {
 
                     let comment_reaction = "+1";
                     if(res.status === 201) {
-                        // TODO: res.assignees - issue.assignees -> success 
                         core.info("User assigned to the issue");
                     } else {
                         comment_reaction = "-1";
